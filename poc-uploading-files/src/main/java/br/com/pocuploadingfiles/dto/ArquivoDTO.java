@@ -29,6 +29,19 @@ public class ArquivoDTO implements Serializable {
      */
     private String dsBase64;
 
+    /**
+     * Construtor padrão
+     */
+    public ArquivoDTO() {}
+
+    /**
+     * Construtor passando o ID e o nome do arquivo para serem settados
+     */
+    public ArquivoDTO(final Integer idArquivo, final String nmArquivo) {
+        this.idArquivo = idArquivo;
+        this.nmArquivo = nmArquivo;
+    }
+
     public Integer getIdArquivo() {
         return this.idArquivo;
     }

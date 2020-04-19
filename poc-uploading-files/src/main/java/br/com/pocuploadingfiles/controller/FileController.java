@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -65,26 +64,12 @@ public class FileController {
     @Transactional
     public List<ArquivoDTO> findAllFilesInParts(final int firstIndex, final int qtdMaxItens) {
 
-        final List<?> ormList = this.entityManager.createNativeQuery(
-                "SELECT * FROM arquivo LIMIT :limit OFFSET :offset", Arquivo.class)
-                .setParameter("limit", qtdMaxItens)
-                .setParameter("offset", firstIndex)
+        final String query = "SELECT NEW br.com.pocuploadingfiles.dto.ArquivoDTO(a.idArquivo, a.nmArquivo) FROM Arquivo a ORDER BY a.idArquivo";
+
+        return this.entityManager.createQuery(query, ArquivoDTO.class)
+                .setMaxResults(qtdMaxItens)
+                .setFirstResult(firstIndex)
                 .getResultList();
-
-        return ormList.stream().map(object -> {
-            final Arquivo orm = (Arquivo) object;
-            return this.arquivoConverter.ormToDto(orm);
-        }).collect(Collectors.toList());
-    }
-
-    /**
-     * Wrapper do método {@link FileController#findAllFilesInParts(int, int)} passando o parâmetro qtdMaxItens como fixo 30
-     *
-     * @see FileController#findAllFilesInParts(int, int)
-     */
-    @Transactional
-    public List<ArquivoDTO> findAllFilesInParts(final int firstIndex) {
-        return this.findAllFilesInParts(firstIndex, 30);
     }
 
     /**

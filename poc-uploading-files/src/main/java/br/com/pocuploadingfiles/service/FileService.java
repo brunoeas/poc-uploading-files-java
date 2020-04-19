@@ -1,7 +1,6 @@
 package br.com.pocuploadingfiles.service;
 
 import java.io.InputStream;
-import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -10,7 +9,6 @@ import javax.ws.rs.core.Response;
 import com.sun.jersey.multipart.FormDataParam;
 
 import br.com.pocuploadingfiles.controller.FileController;
-import br.com.pocuploadingfiles.dto.ArquivoDTO;
 
 /**
  * Service dos Arquivos
@@ -46,16 +44,8 @@ public class FileService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response findAllFilesInParts(@QueryParam("firstIndex") final int firstIndex,
-            @QueryParam("qtdMaxItens") final Integer qtdMaxItens) {
-
-        final List<ArquivoDTO> dtoList;
-        if (qtdMaxItens != null) {
-            dtoList = this.fileController.findAllFilesInParts(firstIndex, qtdMaxItens);
-        } else {
-            dtoList = this.fileController.findAllFilesInParts(firstIndex);
-        }
-
-        return Response.ok(dtoList).build();
+            @QueryParam("qtdMaxItens") final int qtdMaxItens) {
+        return Response.ok(this.fileController.findAllFilesInParts(firstIndex, qtdMaxItens)).build();
     }
 
 }
