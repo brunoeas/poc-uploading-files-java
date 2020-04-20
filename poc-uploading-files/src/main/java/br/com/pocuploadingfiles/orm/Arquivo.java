@@ -1,5 +1,6 @@
 package br.com.pocuploadingfiles.orm;
 
+import java.time.ZonedDateTime;
 import javax.persistence.*;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -33,6 +34,12 @@ public class Arquivo extends PanacheEntityBase {
     @Column(name = "bytes_arquivo", nullable = false)
     private byte[] bytesArquivo;
 
+    /**
+     * Data e hora da criação
+     */
+    @Column(name = "dh_criacao", nullable = false)
+    private ZonedDateTime dhCriacao;
+
     public Integer getIdArquivo() {
         return this.idArquivo;
     }
@@ -55,6 +62,14 @@ public class Arquivo extends PanacheEntityBase {
 
     public void setBytesArquivo(final byte[] bytesArquivo) {
         this.bytesArquivo = bytesArquivo;
+    }
+
+    public ZonedDateTime getDhCriacao() {
+        return this.dhCriacao;
+    }
+
+    public void setDhCriacao(final ZonedDateTime dhCriacao) {
+        this.dhCriacao = dhCriacao;
     }
 
 }

@@ -3,6 +3,7 @@ package br.com.pocuploadingfiles.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
@@ -14,6 +15,7 @@ import org.jboss.logging.Logger;
 
 import br.com.pocuploadingfiles.converter.ArquivoConverter;
 import br.com.pocuploadingfiles.dto.ArquivoDTO;
+import br.com.pocuploadingfiles.dto.PageDTO;
 import br.com.pocuploadingfiles.orm.Arquivo;
 
 /**
@@ -62,14 +64,23 @@ public class FileController {
      * @return Lista de arquivos descomprimidos
      */
     @Transactional
-    public List<ArquivoDTO> findAllFilesInParts(final int firstIndex, final int qtdMaxItens) {
+    public PageDTO<ArquivoDTO> findAllFilesInParts(final int firstIndex, final int qtdMaxItens) {
 
-        final String query = "SELECT NEW br.com.pocuploadingfiles.dto.ArquivoDTO(a.idArquivo, a.nmArquivo) FROM Arquivo a ORDER BY a.idArquivo";
+        final String query = "SELECT NEW br.com.pocuploadingfiles.dto.ArquivoDTO(a.idArquivo, a.nmArquivo) "
+                + "FROM Arquivo a ORDER BY a.dhCriacao DESC";
 
-        return this.entityManager.createQuery(query, ArquivoDTO.class)
+        final List<ArquivoDTO> dtoList = this.entityManager.createQuery(query, ArquivoDTO.class)
                 .setMaxResults(qtdMaxItens)
                 .setFirstResult(firstIndex)
                 .getResultList();
+
+        final long countTotal = Arquivo.count();
+
+        final PageDTO<ArquivoDTO> pageDTO = new PageDTO<>();
+        pageDTO.setCountTotal(countTotal);
+        pageDTO.setListData(dtoList);
+
+        return pageDTO;
     }
 
     /**
@@ -78,6 +89,7 @@ public class FileController {
      * @param arquivoORM - ORM do Arquivo
      */
     private void persistArquivo(final Arquivo arquivoORM) {
+        arquivoORM.setDhCriacao(ZonedDateTime.now());
         arquivoORM.persist();
         arquivoORM.flush();
     }
