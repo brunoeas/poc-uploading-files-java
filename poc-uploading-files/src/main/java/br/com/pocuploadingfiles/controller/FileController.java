@@ -84,6 +84,16 @@ public class FileController {
     }
 
     /**
+     * Deleta um Arquivo pelo ID
+     *
+     * @param id - ID do Arquivo
+     */
+    @Transactional
+    public void deleteArquivoById(final Integer id) {
+        Arquivo.delete("idArquivo", id);
+    }
+
+    /**
      * Persiste o arquivo na base de dados
      *
      * @param arquivoORM - ORM do Arquivo

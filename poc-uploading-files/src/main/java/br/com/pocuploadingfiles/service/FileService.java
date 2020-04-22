@@ -16,6 +16,8 @@ import br.com.pocuploadingfiles.controller.FileController;
  * @author Bruno Eduardo
  */
 @Path("/file")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class FileService {
 
     @Inject
@@ -41,11 +43,22 @@ public class FileService {
      * @return Response com a lista de Arquivos
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response findAllFilesInParts(@QueryParam("firstIndex") final int firstIndex,
             @QueryParam("qtdMaxItens") final int qtdMaxItens) {
         return Response.ok(this.fileController.findAllFilesInParts(firstIndex, qtdMaxItens)).build();
+    }
+
+    /**
+     * Endpoint para deletar um Arquivo pelo ID
+     *
+     * @param id - ID do Arquivo
+     * @return Response 200 OK
+     */
+    @DELETE
+    @Path("/{id}")
+    public Response deleteArquivoById(@PathParam("id") final Integer id) {
+        this.fileController.deleteArquivoById(id);
+        return Response.ok().build();
     }
 
 }
