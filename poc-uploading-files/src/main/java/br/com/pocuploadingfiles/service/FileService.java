@@ -26,19 +26,34 @@ public class FileService {
     /**
      * Endpoint para fazer upload e salvar um novo arquivo
      *
+     * @param uploadedInputStream - Stream do Arquivo
+     * @param fileName            - Nome do Arquivo
      * @return Response com o Arquivo salvo
      */
     @POST
     @Path("/{fileName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response saveFile(@FormDataParam("file") final InputStream uploadedInputStream,
+    public Response uploadAndSaveFile(@FormDataParam("file") final InputStream uploadedInputStream,
             @PathParam("fileName") final String fileName) {
         return Response.ok(this.fileController.saveNewFile(uploadedInputStream, fileName)).build();
     }
 
     /**
-     * Endpoint para retornar uma parte da lista com todos os Arquivos
+     * Endpoint para fazer o download de um arquivo pelo ID
+     *
+     * @param id - ID do Arquivo
+     * @return Response com a Stream do Arquivo para download
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadFileById(@PathParam("id") final Integer id) {
+        return Response.ok(this.fileController.downloadFileById(id)).build();
+    }
+
+    /**
+     * Endpoint para retornar uma lista de Arquivos paginados
      *
      * @return Response com a lista de Arquivos
      */

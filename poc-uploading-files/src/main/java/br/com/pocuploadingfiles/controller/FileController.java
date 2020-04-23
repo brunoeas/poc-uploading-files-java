@@ -37,6 +37,8 @@ public class FileController {
     /**
      * Salva um novo arquivo
      *
+     * @param fileInputStream - Stream do Arquivo
+     * @param fileName        - Nome do Arquivo
      * @return Arquivo salvo
      */
     @Transactional
@@ -57,6 +59,24 @@ public class FileController {
     }
 
     /**
+     * Busca, lê e retorna o Arquivo pelo ID
+     *
+     * @param id - ID do Arquivo
+     * @return Stream do Arquivo
+     */
+    @Transactional
+    public ByteArrayOutputStream downloadFileById(final Integer id) {
+
+        final Arquivo arquivo = Arquivo.findById(id);
+        final byte[] bytesArquivo = arquivo.getBytesArquivo();
+
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(bytesArquivo.length);
+        byteArrayOutputStream.write(bytesArquivo, 0, bytesArquivo.length);
+
+        return byteArrayOutputStream;
+    }
+
+    /**
      * Busca na base de dados e descomprime uma parte de todos os arquivos
      *
      * @param firstIndex  - De qual posição a busca deve começar
@@ -68,7 +88,6 @@ public class FileController {
 
         final String query = "SELECT NEW br.com.pocuploadingfiles.dto.ArquivoDTO(a.idArquivo, a.nmArquivo) "
                 + "FROM Arquivo a ORDER BY a.dhCriacao DESC";
-
         final List<ArquivoDTO> dtoList = this.entityManager.createQuery(query, ArquivoDTO.class)
                 .setMaxResults(qtdMaxItens)
                 .setFirstResult(firstIndex)
@@ -90,7 +109,8 @@ public class FileController {
      */
     @Transactional
     public void deleteArquivoById(final Integer id) {
-        Arquivo.delete("idArquivo", id);
+        final Arquivo orm = Arquivo.findById(id);
+        orm.delete();
     }
 
     /**
@@ -121,6 +141,7 @@ public class FileController {
 
             buffer.flush();
             return buffer.toByteArray();
+
         } catch (final IOException e) {
             LOGGER.log(Logger.Level.ERROR, "Erro ao ler InputStream do arquivo", e);
             throw new RuntimeException("Erro ao ler InputStream do arquivo", e);
